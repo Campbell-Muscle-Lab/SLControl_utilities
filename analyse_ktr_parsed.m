@@ -160,8 +160,12 @@ pks = peakfinder( ...
 % Check if you didn't find one.
 if ((isempty(pks))|| ...
         ((numel(pks)==1)&&(resid_search_force(pks(1))==min(resid_search_force))))
-    dy = diff(resid_search_force,1);
-    [~,resid_index]=max(dy);
+%     dy = diff(resid_search_force,1);
+%     [~,resid_index]=max(dy);
+    %edit by Faruk 
+    dy = diff(resid_search_force,2);
+    [~,resid_index]=min(dy);
+
 else
     resid_index = pks(end);
 end
@@ -201,6 +205,7 @@ if (draw_figure)
             [baseline_level max_y_value],'Color',[0 1 0]);
     end
 end
+ 
 
 % Update ktr_results
 
