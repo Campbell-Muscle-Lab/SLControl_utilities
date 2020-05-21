@@ -23,8 +23,11 @@ params.patch_transparency=0;
 params.t_log_mode=0;
 params.force_scale_factor=1;
 params.fl_scale_factor=1;
+params.force_smooth_n_points = [];
+params.fl_smooth_n_points = [];
 params.force_record_ktr_offset=1;
 params.font_name='Arial';
+params.normalize_force_factor = [];
 
 % Update
 params=parse_pv_pairs(params,varargin);
@@ -110,6 +113,19 @@ for file_counter=1:no_of_records
         t=d.time;
         f=params.force_scale_factor * d.force';
         fl=params.fl_scale_factor * d.fl';
+        
+        % Normalize force if required
+        if (~isempty(params.normalize_force_factor))
+            f = f ./ params.normalize_force_factor(file_counter);
+        end
+        
+        % Apply smoothing if requested
+        if (params.force_smooth_n_points)
+            f = movmean(f, params.force_smooth_n_points);
+        end
+        if (params.fl_smooth_n_points)
+            fl = movmean(fl, params.fl_smooth_n_points);
+        end
         
         pCa_value=d.pCa;
         
@@ -198,9 +214,10 @@ for file_counter=1:no_of_records
     if (color_index==0)
         color_index=no_of_colors;
     end
-    plot(t(t_indices),f(:,t_indices),'-', ...
-        'LineWidth',params.trace_line_width, ...
-        'color',params.trace_colors(color_index,:));
+    output.h_force(file_counter) = ...
+        plot(t(t_indices),f(:,t_indices),'-', ...
+            'LineWidth',params.trace_line_width, ...
+            'color',params.trace_colors(color_index,:));
     
     % Add in pCa values if appropriate
     if (params.display_pCa_values)
@@ -259,6 +276,7 @@ for file_counter=1:no_of_records
     end
     
     % Output data
+    output.first_force(file_counter) = f(:, t_indices(1));
     output.last_force(file_counter) = f(:,t_indices(end));
     output.max_force=max([output.max_force max(f(:,t_indices))]);
     output.min_force=min([output.min_force min(f(:,t_indices))]);
@@ -266,6 +284,7 @@ for file_counter=1:no_of_records
     output.min_fl=min([output.min_fl min(fl(t_indices))]);
     output.min_drawn_points=min([output.min_drawn_points ...
         min(t_indices)]);
+    output.pCa(file_counter) = pCa_value;
 end
 
 % Limit axes
