@@ -91,6 +91,8 @@ if (header_only>=0)
 
     data_file.no_of_triangles=extract_integer_value(input_file,max_search_length,'no_of_triangles:');
     data_file.ramp_mode=extract_integer_value(input_file,max_search_length,'ramp_mode:');
+    data_file.hold_mode=extract_integer_value(input_file,max_search_length,'hold_mode:');
+    data_file.hold_time=1e-3*extract_float_value(input_file,max_search_length,'hold_(ms):');
     data_file.triangle_size=1.0e-6*extract_float_value(input_file,max_search_length,'triangle_size_(µm):');
     data_file.pre_triangle_time=1.0e-3*extract_float_value(input_file,max_search_length,'pre_triangle_(ms):');
     data_file.triangle_halftime=1.0e-3*extract_float_value(input_file,max_search_length,'triangle_halftime_(ms):');
